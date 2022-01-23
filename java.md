@@ -105,3 +105,105 @@ feature：
     }
 ```
 
+
+
+
+
+#### [剑指 Offer 30. 包含min函数的栈](https://leetcode-cn.com/problems/bao-han-minhan-shu-de-zhan-lcof/)
+
+16ms，99.95% 
+
+40.1MB，78.12%
+
+```java
+import java.util.ArrayList;
+
+class MinStack {
+    ArrayList<Integer> stack;
+    ArrayList<Integer> mins;
+    int min;
+    int top;
+
+    /** initialize your data structure here. */
+    public MinStack() {
+        stack = new ArrayList<>();
+        mins = new ArrayList<>();
+        min = Integer.MAX_VALUE;
+        top = -1;
+
+
+
+    }
+
+    public void push(int x) {
+        stack.add(x);
+        min = Integer.min(min,x);
+        mins.add(min);
+        top++;
+//        System.out.println("push: " + x);
+
+    }
+
+    public void pop() {
+//        System.out.println("pop");
+//        System.out.println("value:" + stack.get(top));
+        stack.remove(top);
+        mins.remove(top);
+        top--;
+        if(top>=0){
+            min = mins.get(top);
+        }
+        else{
+            min = Integer.MAX_VALUE;
+        }
+//        System.out.println("top: " + top);
+    }
+
+    public int top() {
+//        System.out.println("top");
+//        System.out.print("top: " + top);
+//        System.out.println(", value:" + stack.get(top));
+        return stack.get(top);
+
+
+    }
+
+    public int min() {
+//        System.out.println("min");
+//        System.out.print("top: " + top);
+//        System.out.println(", value:" + mins.get(top));
+        return mins.get(top);
+
+    }
+}
+```
+
+思路：
+
+既然要求min，pop，push时间复杂度都是O（1）,那就用空间换时间，定义一个mins数组，存储目前为止的最小值。
+
+注意点：
+
+* 一开始使用int数组表示栈，可能会浪费空间，改用ArrayList；
+* min初始化应该使用Integer.MAX_VALUE，确保一定是合适的；
+* push和pop时注意同步更新mins;
+* min表示目前为止整个栈的最小值，所以当pop时注意更新，和mins[top]值一致。
+
+
+
+其他思路：
+
+1. B栈为非严格降序栈，则最小值为B栈栈顶元素（占用空间可以减少）
+
+2. 在不占用额外空间的情况下，存差值，即原元素-当前（不包括自己）最小值
+
+   * 例如 原元素序列： 2 0 -2 6
+   * 则存入的为         ： 2 -2  -2 8
+   * ​             当前最小值2 2 0 -2
+
+   pop时，若栈顶为负，说明当前栈顶的数是原来的最小值，则原来的值为当前最小值，当前最小值应更新为当前最小值-栈顶的数
+
+   若栈顶为正数，说明当前位置原来的数比当前最小值大，所以原来的值为当前最小值+栈顶的数，最小值为当前最小值。
+
+   （未使用额外空间）
+
