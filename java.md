@@ -207,3 +207,170 @@ class MinStack {
 
    （未使用额外空间）
 
+   
+
+#### [剑指 Offer 09. 用两个栈实现队列](https://leetcode-cn.com/problems/yong-liang-ge-zhan-shi-xian-dui-lie-lcof/)
+
+思路：
+
+1. 两个栈，出的时候将A栈内容弹出到B栈，返回B栈最顶端元素，如果要入栈，则将B元素转至A，再入栈。
+
+
+
+#### [剑指 Offer 06. 从尾到头打印链表](https://leetcode-cn.com/problems/cong-wei-dao-tou-da-yin-lian-biao-lcof/)
+
+0ms，100%
+
+39.1MB，33%
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public int[] reversePrint(ListNode head) {
+        int size = 0;
+        ListNode temp = head;
+        while(temp!=null){
+            size++;
+            temp = temp.next;
+        }
+        int[] result = new int[size];
+        for(int i=0;i<size;i++){
+            result[size-i-1] = head.val;
+            head = head.next;
+        }
+        return result;
+    }
+}
+```
+
+思路：
+
+一开始打算使用arraylist存储元素，后来发现没必要，直接遍历即可得到size，然后倒序存入即可。
+
+
+
+#### [剑指 Offer 24. 反转链表](https://leetcode-cn.com/problems/fan-zhuan-lian-biao-lcof/)
+
+0ms，100%
+
+38MB， 85.51%
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public ListNode reverseList(ListNode head) {
+        if(head==null){
+            return null;
+        }
+        
+        int size = 1;
+        ListNode temp = head;
+        while(temp.next!=null){
+            size++;
+            temp = temp.next;
+        }
+        int[] result = new int[size];
+        for(int i=0;i<size;i++){
+            result[size-i-1] = head.val;
+            head = head.next;
+        }
+        int index=0;
+        ListNode newHead = new ListNode(result[index]);
+        ListNode indexNode = newHead;
+        index++;
+        while(index<size){
+            temp = new ListNode(result[index]);
+            indexNode.next = temp;
+            index++;
+            indexNode = indexNode.next;
+        }
+        
+        return newHead;
+
+    }
+}
+```
+
+思路：
+
+沿用上一题代码，保存逆序的值，然后重新构建一个链表
+
+
+
+#### [剑指 Offer 35. 复杂链表的复制](https://leetcode-cn.com/problems/fu-za-lian-biao-de-fu-zhi-lcof/)
+
+5ms，6.11%
+
+37.9MB，78.52%
+
+```java
+/*
+// Definition for a Node.
+class Node {
+    int val;
+    Node next;
+    Node random;
+
+    public Node(int val) {
+        this.val = val;
+        this.next = null;
+        this.random = null;
+    }
+}
+*/
+class Solution {
+    public Node copyRandomList(Node head) {
+                if(head==null){
+            return null;
+        }
+        Node temp = head;
+        Node newHead = new Node(temp.val);
+        Node newTemp = newHead;
+        while(temp.next != null){
+            temp = temp.next;
+            newTemp.next=new Node(temp.val);
+            newTemp = newTemp.next;
+        }
+        
+        temp = head;
+
+        newTemp = newHead;
+        
+        while(temp!=null){
+            Node temp2 =head;
+            Node newTemp2 = newHead;
+            if(temp.random!=null){
+                while(temp.random != temp2){
+                    temp2 = temp2.next;
+                    newTemp2 = newTemp2.next;
+                }
+                newTemp.random = newTemp2;
+            }
+
+            temp = temp.next;
+            newTemp = newTemp.next;
+            
+        }
+        return newHead;
+        
+    }
+}
+```
+
+思路：
+
+没有想到简单的方法，直接遍历求解
