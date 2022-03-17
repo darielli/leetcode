@@ -256,6 +256,8 @@ class Solution {
 
 
 
+也可使用ArrayList，往前插入，这样可以减少一次遍历。
+
 #### [剑指 Offer 24. 反转链表](https://leetcode-cn.com/problems/fan-zhuan-lian-biao-lcof/)
 
 0ms，100%
@@ -405,4 +407,72 @@ class Solution {
     }
 }
 ```
+
+
+
+
+
+**鸽了好久之后又来更新了**
+
+#### [240. 搜索二维矩阵 II](https://leetcode-cn.com/problems/search-a-2d-matrix-ii/)
+
+```java
+class Solution {
+    public boolean searchMatrix(int[][] matrix, int target) {
+        if(matrix.length == 0){
+            return false;
+        }
+
+        for(int i = 0, j = matrix[0].length - 1; i < matrix.length && j >= 0; ){
+            if(matrix[i][j] > target){
+                j--;
+            }
+            else if(matrix[i][j] < target){
+                i++;
+            }
+            else{
+                return true;
+            }
+        }
+        
+        return false;
+    }
+        
+    
+}
+```
+
+主要思路：抓住每行递增，每列递增的特点，每个矩阵右上角的数是每行的最大值，每列的最小值，所以用右上角的值和target比较，从右上角比较到左下角，就可以得到结果了！复杂度O(n)
+
+用时 100%
+
+
+
+#### [剑指 Offer 05. 替换空格](https://leetcode-cn.com/problems/ti-huan-kong-ge-lcof/)
+
+```java
+class Solution {
+    public String replaceSpace(String s) {
+        StringBuilder res = new StringBuilder();
+        for(int i = 0;i < s.length(); i++){
+            if(s.charAt(i) == ' '){
+                res.append("%20");
+            }
+            else{
+                res.append(s.charAt(i));
+            }
+        }
+        return res.toString();
+
+    }
+}
+```
+
+遍历，遇到空格填上%20，否则就加上原字符。
+
+使用StringBuilder原因：StringBuilder不定长，且效率较高
+
+用时 100%
+
+
 
