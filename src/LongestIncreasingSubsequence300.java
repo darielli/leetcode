@@ -1,64 +1,80 @@
-import java.util.ArrayList;
-import java.util.Arrays;
+import sun.reflect.generics.tree.Tree;
+
+import java.util.*;
 
 public class LongestIncreasingSubsequence300 {
-
-    public static int lengthOfLIS(int[] nums) {
-        int[] res = new int[nums.length];
-        int len = 0;
-        for (int num: nums) {
-            int idx = Arrays.binarySearch(res, 0, len, num);
-            idx = idx < 0? -idx - 1: idx;
-            res[idx] = num;
-            if (idx == len) {
-                len++;
-            }
-        }
-        return len;
-//        if(nums.length==0){
-//            return 0;
-//        }
-//        int[] length = new int[nums.length];
-//        Arrays.fill(length,0);
-//        length[0] = 1;
-//        for(int i=1;i<nums.length;i++){
-//            for(int j=0;j<i;j++){
-//                if(nums[j]<nums[i]){
-//                    length[i] = Math.max(length[j],length[i]);
-//                }
-//            }
-//            length[i]++;
-//        }
-//
-//        int max = 0;
-//        for(int i=0;i<nums.length;i++){
-//            max = Math.max(max,length[i]);
-//        }
-//
-//        return max;
-
-    }
-
     public static void main(String[] args){
-        int[] temp = new int[]{0,1,0,3,2,3};
-        System.out.print(lengthOfLIS(temp));
+
+    }
+}
+
+class CQueue {
+    LinkedList<Integer> stack = new LinkedList<>();
+    LinkedList<Integer> assistStack = new LinkedList<>();
+
+
+    public CQueue() {
+
     }
 
-    public String replaceSpace(String s) {
-        StringBuilder res = new StringBuilder();
-        for(int i = 0;i < s.length(); i++){
-            if(s.charAt(i) == ' '){
-                res.append("%20");
-            }
-            else{
-                res.append(s.charAt(i));
+    public void appendTail(int value) {
+        if(!assistStack.isEmpty()){
+            while(!assistStack.isEmpty()){
+                stack.push(assistStack.pop());
             }
         }
-        ArrayList<Integer> re = new ArrayList<>();
-        return res.toString();
-
+        stack.push(value);
 
 
     }
 
+    public int deleteHead() {
+        if(!stack.isEmpty()){
+            while(!stack.isEmpty()){
+                assistStack.push(stack.pop());
+            }
+        }
+        if(assistStack.isEmpty()){
+            return -1;
+        }
+        return assistStack.pop();
+
+    }
+}
+
+class Solution {
+    private Map<Integer, Integer> indexMap;
+
+    public TreeNode myBuildTree(int[] preorder, int[] inorder, int preorder_left, int preorder_right, int inorder_left, int inorder_right) {
+        if (preorder_left > preorder_right) {
+            return null;
+        }
+
+        // 前序遍历中的第一个节点就是根节点
+        int preorder_root = preorder_left;
+        // 在中序遍历中定位根节点
+        int inorder_root = indexMap.get(preorder[preorder_root]);
+
+        // 先把根节点建立出来
+        TreeNode root = new TreeNode(preorder[preorder_root]);
+        // 得到左子树中的节点数目
+        int size_left_subtree = inorder_root - inorder_left;
+        // 递归地构造左子树，并连接到根节点
+        // 先序遍历中「从 左边界+1 开始的 size_left_subtree」个元素就对应了中序遍历中「从 左边界 开始到 根节点定位-1」的元素
+        root.left = myBuildTree(preorder, inorder, preorder_left + 1, preorder_left + size_left_subtree, inorder_left, inorder_root - 1);
+        // 递归地构造右子树，并连接到根节点
+        // 先序遍历中「从 左边界+1+左子树节点数目 开始到 右边界」的元素就对应了中序遍历中「从 根节点定位+1 到 右边界」的元素
+        root.right = myBuildTree(preorder, inorder, preorder_left + size_left_subtree + 1, preorder_right, inorder_root + 1, inorder_right);
+        return root;
+    }
+
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        int n = preorder.length;
+        // 构造哈希映射，帮助我们快速定位根节点
+        indexMap = new HashMap<Integer, Integer>();
+        for (int i = 0; i < n; i++) {
+            indexMap.put(inorder[i], i);
+        }
+        return myBuildTree(preorder, inorder, 0, n - 1, 0, n - 1);
+    }
 }

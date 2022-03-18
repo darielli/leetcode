@@ -211,9 +211,56 @@ class MinStack {
 
 #### [剑指 Offer 09. 用两个栈实现队列](https://leetcode-cn.com/problems/yong-liang-ge-zhan-shi-xian-dui-lie-lcof/)
 
+
+
+```java
+class CQueue {
+    Stack<Integer> stack = new Stack<>();
+    Stack<Integer> assistStack = new Stack<>();
+
+    public CQueue() {
+
+    }
+
+    public void appendTail(int value) {
+        if(!assistStack.empty()){
+            while(!assistStack.empty()){
+                stack.push(assistStack.pop());
+            }
+        }
+
+        stack.push(value);
+
+
+    }
+
+    public int deleteHead() {
+        if(!stack.empty()){
+            while(!stack.empty()){
+                assistStack.push(stack.pop());
+            }
+        }
+        if(assistStack.empty()){
+            return -1;
+        }
+        return assistStack.pop();
+
+    }
+}
+
+/**
+ * Your CQueue object will be instantiated and called as such:
+ * CQueue obj = new CQueue();
+ * obj.appendTail(value);
+ * int param_2 = obj.deleteHead();
+ */
+```
+
 思路：
 
 1. 两个栈，出的时候将A栈内容弹出到B栈，返回B栈最顶端元素，如果要入栈，则将B元素转至A，再入栈。
+2. 中规中矩，但是速度很慢，因为Stack继承了Vector接口，而Vector底层是一个Object[]数组，那么就要考虑空间扩容和移位的问题了
+3. 可以考虑用LinkList代替stack
 
 
 
@@ -414,6 +461,10 @@ class Solution {
 
 **鸽了好久之后又来更新了**
 
+
+
+
+
 #### [240. 搜索二维矩阵 II](https://leetcode-cn.com/problems/search-a-2d-matrix-ii/)
 
 ```java
@@ -473,6 +524,174 @@ class Solution {
 使用StringBuilder原因：StringBuilder不定长，且效率较高
 
 用时 100%
+
+
+
+#### [剑指 Offer 07. 重建二叉树](https://leetcode-cn.com/problems/zhong-jian-er-cha-shu-lcof/)
+
+我的题解
+
+```java
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        return buildTree(preorder,inorder,0,preorder.length-1,0,inorder.length-1);
+
+    }
+
+
+    public TreeNode buildTree(int[] preorder, int[] inorder, int preStart, int preEnd, int inStart, int inEnd){
+        if(preStart == preEnd){
+            return new TreeNode(preorder[preStart]);
+        }
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        return buildTree(preorder,inorder,0,preorder.length-1,0,inorder.length-1);
+
+
+    }
+
+
+    public TreeNode buildTree(int[] preorder, int[] inorder, int preStart, int preEnd, int inStart, int inEnd){
+        if(preStart == preEnd){
+            return new TreeNode(preorder[preStart]);
+        }
+        int val = preorder[preStart];
+        int index;
+        for(index = inStart;index <= inEnd;index++){
+            if(inorder[index] == val){
+                break;
+            }
+        }
+        int leftLength = index - inStart;
+        int rightLength = inEnd - index;
+        TreeNode node = new TreeNode(val);
+        node.left = buildTree(preorder,inorder,preStart+1,preStart+leftLength,inStart,inStart+leftLength - 1);
+        node.right = buildTree(preorder,inorder,preStart+leftLength+1,preEnd, index+1,inEnd);
+        return node;
+    }
+        int index;
+        for(index = inStart;index <= inEnd;index++){
+            if(inorder[index] == val){
+                break;
+            }
+        }
+        int leftLength = index - inStart;
+        int rightLength = inEnd - index;
+        TreeNode node = new TreeNode(val);
+        node.left = buildTree(preorder,inorder,preStart+1,preStart+leftLength,inStart,inStart+leftLength - 1);
+        node.right = buildTree(preorder,inorder,preStart+leftLength+1,preEnd, index+1,inEnd);
+        return node;
+    }
+```
+
+
+
+超过 37%
+
+主要存在的问题：
+
+1. 直接写没有提示的时候会搞错一些常用函数/字段，比如数组获取长度是用.length，字段；字符串获取长度是用.length() 函数
+2. ​        int val = preorder[preStart];直接写成了int val = preorder[0];，递归中不应该出现很多魔数
+
+
+
+较好的题解：
+
+```java
+class Solution {
+    private Map<Integer, Integer> indexMap;
+
+    public TreeNode myBuildTree(int[] preorder, int[] inorder, int preorder_left, int preorder_right, int inorder_left, int inorder_right) {
+        if (preorder_left > preorder_right) {
+            return null;
+        }
+
+        // 前序遍历中的第一个节点就是根节点
+        int preorder_root = preorder_left;
+        // 在中序遍历中定位根节点
+        int inorder_root = indexMap.get(preorder[preorder_root]);
+        
+        // 先把根节点建立出来
+        TreeNode root = new TreeNode(preorder[preorder_root]);
+        // 得到左子树中的节点数目
+        int size_left_subtree = inorder_root - inorder_left;
+        // 递归地构造左子树，并连接到根节点
+        // 先序遍历中「从 左边界+1 开始的 size_left_subtree」个元素就对应了中序遍历中「从 左边界 开始到 根节点定位-1」的元素
+        root.left = myBuildTree(preorder, inorder, preorder_left + 1, preorder_left + size_left_subtree, inorder_left, inorder_root - 1);
+        // 递归地构造右子树，并连接到根节点
+        // 先序遍历中「从 左边界+1+左子树节点数目 开始到 右边界」的元素就对应了中序遍历中「从 根节点定位+1 到 右边界」的元素
+        root.right = myBuildTree(preorder, inorder, preorder_left + size_left_subtree + 1, preorder_right, inorder_root + 1, inorder_right);
+        return root;
+    }
+
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        int n = preorder.length;
+        // 构造哈希映射，帮助我们快速定位根节点
+        indexMap = new HashMap<Integer, Integer>();
+        for (int i = 0; i < n; i++) {
+            indexMap.put(inorder[i], i);
+        }
+        return myBuildTree(preorder, inorder, 0, n - 1, 0, n - 1);
+    }
+}
+
+```
+
+时间：99.96%
+
+与我的方法的改进之处：用hashMap提高了遍历的效率
+
+
+
+
+
+此外，另一个题解：
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        if(preorder.length == 0){
+            return null;
+        }
+    Map<Integer, Integer> preIndex = new HashMap<>();
+    for (int i = 0; i < preorder.length; i++) {
+        preIndex.put(preorder[i], i);
+    }
+
+    return buildTree(preIndex, inorder, 0, inorder.length - 1);
+
+
+    }
+
+
+private TreeNode buildTree(Map<Integer, Integer> preIndex, int[] in, int start, int end) {
+    if (start == end) {
+        return new TreeNode(in[start]);
+    }
+    int indexOfRoot = start;
+    for (int i = start; i <= end; i++) {
+        if (preIndex.get(in[i]) < preIndex.get(in[indexOfRoot])) {
+            indexOfRoot = i;
+        }
+    }
+    TreeNode root = new TreeNode(in[indexOfRoot]);
+    if (start <= indexOfRoot - 1) root.left = buildTree(preIndex, in, start, indexOfRoot - 1);
+    if (indexOfRoot + 1 <= end) root.right = buildTree(preIndex, in, indexOfRoot + 1, end);
+    return root;
+}
+}
+```
+
+时间：5%，效率很低
+
+和上一题题解的区别，传递的不是数组而是hashMap，导致效率大幅下降
 
 
 
