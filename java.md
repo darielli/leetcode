@@ -1,4 +1,4 @@
-#### [1805. 字符串中不同整数的数目](https://leetcode-cn.com/problems/number-of-different-integers-in-a-string/)
+#### 1. [1805. 字符串中不同整数的数目](https://leetcode-cn.com/problems/number-of-different-integers-in-a-string/)
 
 代码：
 
@@ -109,7 +109,7 @@ feature：
 
 
 
-#### [剑指 Offer 30. 包含min函数的栈](https://leetcode-cn.com/problems/bao-han-minhan-shu-de-zhan-lcof/)
+#### 2. [剑指 Offer 30. 包含min函数的栈](https://leetcode-cn.com/problems/bao-han-minhan-shu-de-zhan-lcof/)
 
 16ms，99.95% 
 
@@ -209,7 +209,7 @@ class MinStack {
 
    
 
-#### [剑指 Offer 09. 用两个栈实现队列](https://leetcode-cn.com/problems/yong-liang-ge-zhan-shi-xian-dui-lie-lcof/)
+#### 3. [剑指 Offer 09. 用两个栈实现队列](https://leetcode-cn.com/problems/yong-liang-ge-zhan-shi-xian-dui-lie-lcof/)
 
 
 
@@ -264,7 +264,7 @@ class CQueue {
 
 
 
-#### [剑指 Offer 06. 从尾到头打印链表](https://leetcode-cn.com/problems/cong-wei-dao-tou-da-yin-lian-biao-lcof/)
+#### 4. [剑指 Offer 06. 从尾到头打印链表](https://leetcode-cn.com/problems/cong-wei-dao-tou-da-yin-lian-biao-lcof/)
 
 0ms，100%
 
@@ -305,7 +305,7 @@ class Solution {
 
 也可使用ArrayList，往前插入，这样可以减少一次遍历。
 
-#### [剑指 Offer 24. 反转链表](https://leetcode-cn.com/problems/fan-zhuan-lian-biao-lcof/)
+#### 5. [剑指 Offer 24. 反转链表](https://leetcode-cn.com/problems/fan-zhuan-lian-biao-lcof/)
 
 0ms，100%
 
@@ -360,7 +360,7 @@ class Solution {
 
 
 
-#### [剑指 Offer 35. 复杂链表的复制](https://leetcode-cn.com/problems/fu-za-lian-biao-de-fu-zhi-lcof/)
+#### 6. [剑指 Offer 35. 复杂链表的复制](https://leetcode-cn.com/problems/fu-za-lian-biao-de-fu-zhi-lcof/)
 
 5ms，6.11%
 
@@ -465,7 +465,7 @@ class Solution {
 
 
 
-#### [240. 搜索二维矩阵 II](https://leetcode-cn.com/problems/search-a-2d-matrix-ii/)
+#### 7. [240. 搜索二维矩阵 II](https://leetcode-cn.com/problems/search-a-2d-matrix-ii/)
 
 ```java
 class Solution {
@@ -499,7 +499,7 @@ class Solution {
 
 
 
-#### [剑指 Offer 05. 替换空格](https://leetcode-cn.com/problems/ti-huan-kong-ge-lcof/)
+#### 8. [剑指 Offer 05. 替换空格](https://leetcode-cn.com/problems/ti-huan-kong-ge-lcof/)
 
 ```java
 class Solution {
@@ -527,7 +527,7 @@ class Solution {
 
 
 
-#### [剑指 Offer 07. 重建二叉树](https://leetcode-cn.com/problems/zhong-jian-er-cha-shu-lcof/)
+#### 9. [剑指 Offer 07. 重建二叉树](https://leetcode-cn.com/problems/zhong-jian-er-cha-shu-lcof/)
 
 我的题解
 
@@ -694,4 +694,340 @@ private TreeNode buildTree(Map<Integer, Integer> preIndex, int[] in, int start, 
 和上一题题解的区别，传递的不是数组而是hashMap，导致效率大幅下降
 
 
+
+
+
+#### 10. [154. 寻找旋转排序数组中的最小值 II](https://leetcode-cn.com/problems/find-minimum-in-rotated-sorted-array-ii/)
+
+我的解法：for循环遍历nums[i] >num[i+1]
+
+速度：100%，复杂度O(n)
+
+
+
+优解：
+
+```java
+class Solution {
+    public int findMin(int[] nums) {
+        int left = 0, right = nums.length - 1;
+        while (left < right) {
+            int mid = (left + right) / 2;
+            if (nums[mid] > nums[right]) left = mid + 1;
+            else if (nums[mid] < nums[right]) right = mid;
+            else right = right - 1;
+        }
+        return nums[left];
+    }
+}
+```
+
+思路：由于数据存在一定的规律，显然可以找到效率更高的做法，这一题就可以使用二分法查找，
+
+但难点在于出现重复值时如何处理，本解巧妙之处在于**`right--`**；既可以保证不越界、也可以保证不会丢失最小值，同时，可以缩小求解数组的长度，保证了不会死循环。
+
+虽然for循环遍历也是0ms，100%，但是二分法的时间复杂度为O(logn)，显然要优于遍历的。
+
+#### 11. [剑指 Offer 10- I. 斐波那契数列](https://leetcode-cn.com/problems/fei-bo-na-qi-shu-lie-lcof/)
+
+我的题解：
+
+
+
+```java
+class Solution {
+    public int fib(int n) {
+        if(n == 0){
+            return 0;
+        }
+        else if(n == 1){
+            return 1;
+        }
+        else{
+            return fib(n - 1) + fib(n - 2);
+        }
+
+    }
+}
+```
+
+问题：超时，一旦n较大，递归的方法速度就很慢
+
+题解2：
+
+```java
+class Solution {
+    public int fib(int n) {
+        if(n == 0){
+            return 0;
+        }
+        else if(n == 1){
+            return 1;
+        }
+        int first = 0;
+        int second = 1;
+        int third = 1;
+        for(int i = 0;i < n - 1;i++){
+            third = (first + second) % 1000000007;
+            first = second;
+            second = third;
+        }
+        return third;
+
+    }
+}
+```
+
+不递归，也能实现斐波那契的加法，for足够
+
+时间上O(n),0ms，100%
+
+出现的问题：
+
+1. 没看清题目，结果需要模1000000007
+2. 只在最后一次取模，中间没有取模导致超出int范围
+3. 本来中间使用long，但是long范围也不够，所以也会超出范围
+4. 使用long，返回结果时没有类型转换成int，导致类型错误。
+
+
+
+
+
+#### 12. [剑指 Offer 16. 数值的整数次方](https://leetcode-cn.com/problems/shu-zhi-de-zheng-shu-ci-fang-lcof/)
+
+我的题解：
+
+```java
+class Solution {
+    public double myPow(double x, int n) {
+        double x2 = x;
+        boolean negative = n < 0;
+        n = negative ? -n : n;
+        if(x == 0 || x == 1){
+            return x ;
+        }
+        if(n == 0){
+            return 1;
+        }
+        for(int i = 0; i < n - 1; i++){
+            x2 = x2 * x;
+        }
+        return negative? 1 / x2 : x2;
+    }
+}
+```
+
+问题：超出时间限制，所以在for循环除可以改进
+
+解法2：
+
+```java
+class Solution {
+    public double myPow(double x, int n) {
+        if(x == 0 || x == 1){
+            return x;
+        }
+        boolean negative = n < 0 ? true : false;
+        n = negative ? -n : n;
+        double res = posiPow(x,n);
+        return negative ? 1 / res : res;
+    }
+
+    public double posiPow(double x, int n){
+        if(n == 0){
+            return 1;
+        }
+        else if( n == 1){
+            return x;
+        }
+        if(n % 2 == 0){
+            return posiPow(x, n/2) * posiPow(x, n/2);
+        }
+        else{
+            return posiPow(x,n/2) * posiPow(x, n/2) * x;
+        }
+    }
+}
+```
+
+解决了for循环的问题，但是没有解决超时问题
+
+复杂度从O(n) --> O((logn)2)
+
+思路：posiPow(x, n/2) 不需要求那么多遍
+
+优解：
+
+```java
+class Solution {
+    public double myPow(double x, int n) {
+        if(x == 0 || x == 1){
+            return x;
+        }
+        boolean negative = n < 0 ? true : false;
+        n = negative ? -n : n;
+        double res = posiPow(x,n);
+        return negative ? 1 / res : res;
+    }
+
+    public double posiPow(double x, int n){
+        if(n == 0){
+            return 1;
+        }
+        else if( n == 1){
+            return x;
+        }
+        double t = posiPow(x, n/2);
+        if(n % 2 == 0){
+            return  t * t;
+        }
+        else{
+            return t * t * x;
+        }
+    }
+}
+```
+
+时间复杂度O(logn) 0ms 100%
+
+
+
+
+
+#### 13. [剑指 Offer 15. 二进制中1的个数](https://leetcode-cn.com/problems/er-jin-zhi-zhong-1de-ge-shu-lcof/)
+
+
+
+我的题解：
+
+```java
+public class Solution {
+    // you need to treat n as an unsigned value
+    public int hammingWeight(int n) {
+        int count = 0;
+        while(n != 1){
+            count += n % 2;
+            n = n / 2;
+        }
+        count++;
+        return count;
+        
+    }
+}
+```
+
+问题：超时
+
+优解：
+
+```java
+public class Solution {
+    // you need to treat n as an unsigned value
+    public int hammingWeight(int n) {
+    int mask = 0x01;
+
+    int res = 0;
+    int t = n;
+    while (t != 0) {
+        if ((t & mask) == 1) {
+            res++;
+        }
+        t = t >>> 1;
+    }
+
+    return res;
+        
+    }
+}
+```
+
+0ms 100%，时间复杂度O(N),N是n的二进制位数
+
+所以两种做法的区别就在于位运算和普通运算的效率上
+
+
+
+
+
+[解析](https://leetcode-cn.com/problems/er-jin-zhi-zhong-1de-ge-shu-lcof/solution/er-jin-zhi-zhong-1de-ge-shu-by-leetcode-50bb1/)
+
+```java
+public class Solution {
+    public int hammingWeight(int n) {
+        int ret = 0;
+        while (n != 0) {
+            n &= n - 1;
+            ret++;
+        }
+        return ret;
+    }
+}
+```
+
+这种解法主要是发现了n&(n-1)可以将n的最后一个1变成0，所以复杂度为O(log*n*)
+
+
+
+
+
+#### 14. [剑指 Offer 17. 打印从1到最大的n位数](https://leetcode-cn.com/problems/da-yin-cong-1dao-zui-da-de-nwei-shu-lcof/)
+
+我的题解：
+
+```java
+class Solution {
+    public int[] printNumbers(int n) {
+        int end = (int)Math.pow(10,n) - 1;
+        int[] res = new int[end];
+        for(int i=0;i<end;i++){
+            res[i] = i+1;
+        }
+        return res;
+
+
+    }
+}
+```
+
+直接for循环，0ms，100%
+
+
+
+#### 15. [剑指 Offer 18. 删除链表的节点](https://leetcode-cn.com/problems/shan-chu-lian-biao-de-jie-dian-lcof/)
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public ListNode deleteNode(ListNode head, int val) {
+        ListNode head2 =head;
+        if(head.val == val){
+            return head.next;
+        }
+        ListNode before = null;
+        while(head.next != null){
+            if(head.val == val){
+                break;
+            }
+            before = head;
+            head = head.next;
+        }
+        before.next = head.next;
+        head.next = null;
+        return head2;
+
+
+    }
+}
+```
+
+0ms 100%
+
+遍历
 

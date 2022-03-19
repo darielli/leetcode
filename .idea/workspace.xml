@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f2e6c735-e11f-40a8-9e0e-fd96c0ff1125" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/java.md" beforeDir="false" afterPath="$PROJECT_DIR$/java.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/leetcode/LongestIncreasingSubsequence300.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/leetcode/LongestIncreasingSubsequence300.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/LongestIncreasingSubsequence300.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LongestIncreasingSubsequence300.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
