@@ -360,6 +360,46 @@ class Solution {
 
 
 
+思路二：
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode reverseList(ListNode head) {
+        if(head == null){
+            return head;
+        }
+        ListNode pre = head;
+        ListNode cur = head.next;
+        ListNode next = null;
+        pre.next = null;
+        while(cur != null){
+            next = cur.next;
+            cur.next = pre;
+
+            pre = cur;
+            cur = next;
+
+        }
+        return pre;
+
+    }
+}
+```
+
+0ms，100%
+
+上一种做法引入了别的数据结构，所以不算是很好，这一种用三指针的方式实现链表反转
+
 #### 6. [剑指 Offer 35. 复杂链表的复制](https://leetcode-cn.com/problems/fu-za-lian-biao-de-fu-zhi-lcof/)
 
 5ms，6.11%
@@ -1031,3 +1071,239 @@ class Solution {
 
 遍历
 
+#### 16. [剑指 Offer 21. 调整数组顺序使奇数位于偶数前面](https://leetcode-cn.com/problems/diao-zheng-shu-zu-shun-xu-shi-qi-shu-wei-yu-ou-shu-qian-mian-lcof/)
+
+
+
+我的题解
+
+```java
+class Solution {
+    public int[] exchange(int[] nums) {
+        int left = 0;
+        int right = nums.length - 1;
+        while(left < right){
+            if(nums[left] % 2 == 0 && nums[right] % 2 == 1){
+                int temp = nums[left];
+                nums[left] = nums[right];
+                nums[right] = temp;
+                left++;
+                right--;
+            }
+            else if(nums[left] % 2 == 0){
+                right--;
+            }
+            else if(nums[right] % 2 == 1){
+                left++;
+            }
+            else{
+                left++;
+                right--;
+            }
+
+        }
+        return nums;
+
+    }
+}
+```
+
+双指针，如果符合条件就交换；
+
+这里没有保证奇数之间、偶数之间的顺序。如果需要保证，可以采用冒泡排序，或者两次遍历分别取出奇偶数，然后合到一起去
+
+2ms 53.68%
+
+
+
+**改进思路**
+
+1. 位运算比取模的效率要高
+2. 双指针不需要分这么多种情况
+
+改进后代码：
+
+```java
+class Solution {
+    public int[] exchange(int[] nums) {
+        int left = 0;
+        int right = nums.length - 1;
+        while(left < right){
+            while((nums[left] & 1) != 0 && left < right ){
+                left++;
+            }
+            while((nums[right] & 1) != 1 && left < right){
+                right--;
+            }
+            if(left < right){
+                int temp = nums[left];
+                nums[left] = nums[right];
+                nums[right] =temp;
+            }
+
+        }
+        return nums;
+
+    }
+}
+```
+
+1ms 100%
+
+一个地方指出：
+
+```java
+            if(left < right){
+                int temp = nums[left];
+                nums[left] = nums[right];
+                nums[right] =temp;
+            }
+```
+
+这里判断不判断其实都可以，因为前面两个while有`left <right`这个判断了，所以这里，要么是left不等于right，找到符合条件的两个数，要么left = right，那即便相等，互换也不会有问题。
+
+#### 17. [剑指 Offer 22. 链表中倒数第k个节点](https://leetcode-cn.com/problems/lian-biao-zhong-dao-shu-di-kge-jie-dian-lcof/)
+
+双指针即可，常见问题，常见思路
+
+题解：
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public ListNode getKthFromEnd(ListNode head, int k) {
+        if(head.next == null){//没有后继节点，此时按理k只能为1
+            return head;
+        }
+        ListNode left = head;
+        ListNode right = head;
+        for(int i = 0; i < k - 1; i++){
+            right = right.next;
+        }
+        while(right.next != null){
+            left = left.next;
+            right = right.next;
+        }
+        return left;
+
+    }
+}
+```
+
+0ms，100%
+
+
+
+
+
+#### 18. [剑指 Offer 63. 股票的最大利润](https://leetcode-cn.com/problems/gu-piao-de-zui-da-li-run-lcof/)
+
+题解：
+
+```java
+class Solution {
+    public int maxProfit(int[] prices) {
+        int left = 0;
+        int right = 1;
+        int res = 0;
+        while(right < prices.length){
+            res = Math.max(res,prices[right]-prices[left]);
+            if(prices[right] < prices[left]){
+                left = right;
+            }
+            right++;
+        }
+        return res;
+
+    }
+}
+```
+
+时间：69%
+
+
+
+
+
+#### 19. [剑指 Offer 59 - I. 滑动窗口的最大值](https://leetcode-cn.com/problems/hua-dong-chuang-kou-de-zui-da-zhi-lcof/)
+
+```java
+class Solution {
+    public int[] maxSlidingWindow(int[] nums, int k) {
+        if(nums.length == 0){
+            int[] res = new int[0];
+            return res;
+        }
+        int[] res = new int[nums.length - k + 1];
+        int max = nums[0];
+        for(int i = 0; i < k; i++){
+            max = Math.max(max,nums[i]);
+        }
+        res[0] = max;
+
+        for(int i = 1;i < nums.length - k + 1; i++){
+            max = nums[i];
+            for(int j = i; j < i + k; j++){
+                max = Math.max(max,nums[j]);
+            }
+            res[i] = max;
+
+        }
+
+        return res;
+
+    }
+}
+```
+
+通过了但显然效率不高（22%），复杂度O(nk)
+
+改进思路，如何将查询最大值复杂度降低，最好能从O(k)降低到O(1)
+
+可选方法：单调队列
+
+[解析](https://leetcode-cn.com/problems/hua-dong-chuang-kou-de-zui-da-zhi-lcof/solution/mian-shi-ti-59-i-hua-dong-chuang-kou-de-zui-da-1-6/)
+
+```java
+class Solution {
+    public int[] maxSlidingWindow(int[] nums, int k) {
+        if(nums.length == 0 || k == 0){
+            return new int[0];
+        }
+        Deque<Integer> deque = new LinkedList<>();
+        int[] result = new int[nums.length - k + 1];
+
+        for(int j = 0, i = 1 - k; j < nums.length; i++, j++){
+            //如果不在窗口内删掉第一个
+            if(i > 0 && deque.peekFirst() == nums[i-1]){
+                deque.removeFirst();
+            }
+            //保持递减
+            while(!deque.isEmpty() && deque.peekLast() < nums[j]){
+                deque.removeLast();
+            }
+            deque.addLast(nums[j]);
+
+            //记录最大值
+            if(i >= 0){
+                result[i] = deque.peekFirst();
+            }
+        }
+        return result;
+
+    }
+}
+```
+
+效率：78.2%
+
+使用单调队列获得窗口内的最大值，复杂度O(nlogn)，不可能同时在添加删除和获得最大值时实现O(1)复杂度。
+
+注意一点，队列为非严格递减队列，`deque.peekLast() < nums[j])` 此处是将小于滑动窗口右边的值的数去掉，而非把小于等于去掉，所以此处形成的队列是非严格递减的。
