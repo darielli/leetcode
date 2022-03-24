@@ -1,31 +1,27 @@
-import java.util.Deque;
-import java.util.LinkedList;
+import java.util.HashMap;
 
 class Solution {
-    public int[] maxSlidingWindow(int[] nums, int k) {
-        if(nums.length == 0 || k == 0){
-            return new int[0];
-        }
-        Deque<Integer> deque = new LinkedList<>();
-        int[] result = new int[nums.length - k + 1];
+    public static void main(String[] args){
+        System.out.print(lengthOfLongestSubstring("pwkewt"));
+    }
+    public static int lengthOfLongestSubstring(String s) {
+        String str = s;
+        if (str == null || str.length() == 0) return 0;
 
-        for(int j = 0, i = 1 - k; j < nums.length; i++, j++){
-            //如果不在窗口内删掉第一个
-            if(i > 0 && deque.peekFirst() == nums[i-1]){
-                deque.removeFirst();
-            }
-            //保持递减
-            while(!deque.isEmpty() && deque.peekLast() < nums[j]){
-                deque.removeLast();
-            }
-            deque.addLast(nums[j]);
+        HashMap<Character, Integer> temp = new HashMap<>();
+        char[] chars = str.toCharArray();
 
-            //记录最大值
-            if(i >= 0){
-                result[i] = deque.peekFirst();
+        int res = 0, start = 0;
+        for (int i = 0; i < chars.length; i++) {
+            if (temp.containsKey(chars[i])) {
+                start = Math.max(temp.put(chars[i], i) + 1, start);
             }
+
+            temp.put(chars[i], i);
+            res = Math.max(res, i - start + 1);
         }
-        return result;
+
+        return res;
 
     }
 }

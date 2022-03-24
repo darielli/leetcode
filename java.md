@@ -1307,3 +1307,236 @@ class Solution {
 使用单调队列获得窗口内的最大值，复杂度O(nlogn)，不可能同时在添加删除和获得最大值时实现O(1)复杂度。
 
 注意一点，队列为非严格递减队列，`deque.peekLast() < nums[j])` 此处是将小于滑动窗口右边的值的数去掉，而非把小于等于去掉，所以此处形成的队列是非严格递减的。
+
+
+
+
+
+#### 20. [剑指 Offer 54. 二叉搜索树的第k大节点](https://leetcode-cn.com/problems/er-cha-sou-suo-shu-de-di-kda-jie-dian-lcof/)
+
+
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    int res,k;
+    public int kthLargest(TreeNode root, int k) {
+        this.k = k;
+        dsf(root);
+        return res;
+
+
+    }
+
+    public void dsf(TreeNode node){
+        if(node == null){
+            return;
+        }
+        dsf(node.right);
+        k--;
+        if(k == 0){
+            this.res = node.val;
+            return;
+        }
+        dsf(node.left);
+
+
+    }
+
+}
+```
+
+思路：二叉搜索树的中序遍历为递增序列，所以中旬遍历倒序为递减序列，记录一个公共变量k，然后中旬倒序遍历，当k为0时，该节点的val值就是所要求的的值。
+
+Tips：如何保存公共变量是一个需要注意的问题，java对于数值是直接复制值，所以如果传递int值每次递归实际上访问的不是用一个数值，此处使用类的变量是一个解决方法，如果题目是直接给定一个函数没有这个类的话，我们可以定义一个只有1个变量的数组，用传递数组的方式来实现传递引用。
+
+[更多详细解析](https://leetcode-cn.com/problems/er-cha-sou-suo-shu-de-di-kda-jie-dian-lcof/solution/mian-shi-ti-54-er-cha-sou-suo-shu-de-di-k-da-jie-d/)
+
+
+
+#### 21. [剑指 Offer 53 - I. 在排序数组中查找数字 I](https://leetcode-cn.com/problems/zai-pai-xu-shu-zu-zhong-cha-zhao-shu-zi-lcof/)
+
+思路分析：
+
+显然在排序树组中查找一个数值的复杂度不会超过O(n)，同时不会低于O(logn)，直接遍历是一个可以解决问题的方法，所以我们应该尽可能地使复杂度靠近O(logn).
+
+因此，思路显然为：二分查找找到首尾两个值，然后利用下标差得到该数字的个数
+
+```java
+class Solution {
+    public int search(int[] nums, int target) {
+        if(nums.length == 0){
+            return 0;
+        }
+        int left = binarySearch(nums, 0, nums.length - 1, target, 0);
+        if(left == -1){
+            return 0;
+        }
+        int right = binarySearch(nums, 0, nums.length - 1, target, 1);
+        return right - left + 1;
+
+    }
+
+    //flag为0表示查找左边target，1表示查找右边target
+    public int binarySearch(int[] nums, int left, int right,int target, int flag){
+        int middle = (left + right) / 2;
+        if(target < nums[left]){
+            return -1;
+        }
+        if(target > nums[right]){
+            return -1;
+        }
+        if(left == right && nums[left] == target){
+            return left;
+        }
+        else if(left == right){
+            return -1;
+        }
+        if(target < nums[middle]){
+            return binarySearch(nums, left, middle - 1, target, flag);
+        }
+        else if(nums[middle] < target){
+            return binarySearch(nums, middle + 1, right, target, flag);
+        }
+        else{
+            if(flag == 0){//查找左边target
+                if(middle > left && nums[middle - 1] == target){
+                    return binarySearch(nums, left, middle - 1, target, flag);
+                }
+                else{
+                    return middle;
+                }
+
+            }
+            else{//查找右边target
+                if(middle < right && nums[middle + 1] == target){
+                    return binarySearch(nums, middle + 1, right, target, flag);
+                }
+                else{
+                    return middle;
+                }
+
+            }
+        }
+    }
+
+}
+```
+
+0ms，100%
+
+出现的问题：
+
+1. 误以为target一定在数组中，导致出错
+2. if-else太多
+3. 查左边和查右边的代码重复的较多，可以合并
+
+[**官方题解：**](https://leetcode-cn.com/problems/zai-pai-xu-shu-zu-zhong-cha-zhao-shu-zi-lcof/solution/zai-pai-xu-shu-zu-zhong-cha-zhao-shu-zi-wl6kr/)
+
+```java
+class Solution {
+    public int search(int[] nums, int target) {
+        int leftIdx = binarySearch(nums, target, true);
+        int rightIdx = binarySearch(nums, target, false) - 1;
+        if (leftIdx <= rightIdx && rightIdx < nums.length && nums[leftIdx] == target && nums[rightIdx] == target) {
+            return rightIdx - leftIdx + 1;
+        } 
+        return 0;
+    }
+
+    public int binarySearch(int[] nums, int target, boolean lower) {
+        int left = 0, right = nums.length - 1, ans = nums.length;
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            if (nums[mid] > target || (lower && nums[mid] >= target)) {
+                right = mid - 1;
+                ans = mid;
+            } else {
+                left = mid + 1;
+            }
+        }
+        return ans;
+    }
+}
+```
+
+两种做法的异同：总的思路一致，二分查找实现的方法不同，对于第一种，为了避免陷入死循环，就必须判断很多特殊情况，导致if-else结构很多，同时，很多相同的if-else结构可以合并，但第一种返回的就是target的下标，否则返回-1，而第二种实际上返回的是最接近target的数的下标，将特殊情况抛给二分法之外判断。
+
+
+
+
+
+优解：
+
+```java
+class Solution {
+    public int search(int[] nums, int target) {
+        return helper(nums, target) - helper(nums, target - 1);
+    }
+    int helper(int[] nums, int tar) {
+        int i = 0, j = nums.length - 1;
+        while(i <= j) {
+            int m = (i + j) / 2;
+            if(nums[m] <= tar) i = m + 1;
+            else j = m - 1;
+        }
+        return i;
+    }
+}
+```
+
+思路：不是求target的左右边界，而是求target和target-1的右边界相减
+
+此外，这个算法求出来的不是target的最右边的值的下标，而是上述下标+1，这样其实可以避免一些相等时的特殊情况的判断。
+
+
+
+#### 22. [剑指 Offer 48. 最长不含重复字符的子字符串](https://leetcode-cn.com/problems/zui-chang-bu-han-zhong-fu-zi-fu-de-zi-zi-fu-chuan-lcof/)
+
+看到题目的一个思路：双向栈，将字母入栈，如果有重复字母，出栈至 去掉重复的那一个，max = max（max，length）
+
+问题：字母是无序的，每次都要重复判断，且栈内内容不好判断。
+
+
+
+优解：
+
+```java
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        if(s == null || s.length() == 0){
+            return 0;
+        }
+
+        HashMap<Character, Integer> map = new HashMap<>();
+        char[] chars = s.toCharArray();
+
+        int res = 0, start = 0;
+        for(int i = 0; i < s.length(); i++){
+            if(map.containsKey(chars[i])){
+                start = Math.max(map.put(chars[i], i) + 1, start);
+            }
+            map.put(chars[i], i);
+            res = Math.max(res, i - start + 1);
+        }
+        return res;
+
+    }
+}
+```
+
+利用hashMap来实现不重复，类似之前的复制随机指针链表
+
+tips：hashMap函数的put方法如果重复了会返回value，否则返回null
+
+4ms，92.01%
+
+todo：动态规划&滑动窗口也可解
