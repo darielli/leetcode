@@ -1,36 +1,32 @@
 import java.util.ArrayList;
 public class MedianFinder3{
     public static void main(String[] args){
-
-        String s = "123456656";
-        int index = s.substring()
-        System.out.print(index);
-//        MedianFinder medianFinder = new MedianFinder();
-//        medianFinder.addNum(6);
-//        System.out.println(medianFinder.findMedian());
-//        medianFinder.addNum(10);
-//        System.out.println(medianFinder.findMedian());
-//        medianFinder.addNum(2);
-//        System.out.println(medianFinder.findMedian());
-//        medianFinder.addNum(6);
-//        System.out.println(medianFinder.findMedian());
-//        medianFinder.addNum(5);
-//        System.out.println(medianFinder.findMedian());
-//        medianFinder.addNum(0);
-//        System.out.println(medianFinder.findMedian());
-//        medianFinder.addNum(6);
-//        System.out.println(medianFinder.findMedian());
-//        medianFinder.addNum(3);
-//        System.out.println(medianFinder.findMedian());
-//        medianFinder.addNum(1);
-//        System.out.println(medianFinder.findMedian());
-//        medianFinder.addNum(0);
-//        System.out.println(medianFinder.findMedian());
-//        medianFinder.addNum(0);
-//        System.out.println(medianFinder.findMedian());
-//        for(int i=0;i<medianFinder.size;i++){
-//            System.out.print(medianFinder.nums.get(i) + " ");
-//        }
+        MedianFinder medianFinder = new MedianFinder();
+        medianFinder.addNum(6);
+        System.out.println(medianFinder.findMedian());
+        medianFinder.addNum(10);
+        System.out.println(medianFinder.findMedian());
+        medianFinder.addNum(2);
+        System.out.println(medianFinder.findMedian());
+        medianFinder.addNum(6);
+        System.out.println(medianFinder.findMedian());
+        medianFinder.addNum(5);
+        System.out.println(medianFinder.findMedian());
+        medianFinder.addNum(0);
+        System.out.println(medianFinder.findMedian());
+        medianFinder.addNum(6);
+        System.out.println(medianFinder.findMedian());
+        medianFinder.addNum(3);
+        System.out.println(medianFinder.findMedian());
+        medianFinder.addNum(1);
+        System.out.println(medianFinder.findMedian());
+        medianFinder.addNum(0);
+        System.out.println(medianFinder.findMedian());
+        medianFinder.addNum(0);
+        System.out.println(medianFinder.findMedian());
+        for(int i=0;i<medianFinder.size;i++){
+            System.out.print(medianFinder.nums.get(i) + " ");
+        }
 
     }
 }
