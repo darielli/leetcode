@@ -1540,3 +1540,344 @@ tips：hashMap函数的put方法如果重复了会返回value，否则返回null
 4ms，92.01%
 
 todo：动态规划&滑动窗口也可解
+
+[动态规划](https://leetcode-cn.com/problems/zui-chang-bu-han-zhong-fu-zi-fu-de-zi-zi-fu-chuan-lcof/solution/mian-shi-ti-48-zui-chang-bu-han-zhong-fu-zi-fu-d-9/)可解，但是并没有简单很多，时间复杂度一致
+
+
+
+#### 23. [剑指 Offer 47. 礼物的最大价值](https://leetcode-cn.com/problems/li-wu-de-zui-da-jie-zhi-lcof/)
+
+思路：动态规划题，往右或往下移动，所以为了取得最大值，最后一次一定是右下角的值，开始时左上角的值。假设M（i,j）是坐标（i,j）到右下角的礼物的最大值，所以D(i, j)是(i, j)坐标处的最大值，所以M（i, j）=  D(i, j) + max(M(i+1, j), M(i, j+1))
+
+```java
+class Solution {
+    public int maxValue(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;//提示中说明存在且不为零
+        int[][] res = new int[m][n];
+        res[m - 1][n - 1] = grid[m - 1][n- 1];
+        for(int i = m - 1; i >= 0; i--){
+            for(int j = n - 1; j >= 0; j--){
+                if(j == n - 1 && i == m -1){
+                    continue;
+                }
+                else if(j == n - 1){
+                    res[i][j] = res[i + 1][j] + grid[i][j];
+                }
+                else if(i == m -1){
+                    res[i][j] = res[i][j + 1] + grid[i][j];
+                }
+                else{
+                    res[i][j] = Math.max(res[i][ j + 1], res[i + 1][j]) + grid[i][j];
+                }
+            }
+        }
+        return res[0][0];
+    }
+}
+```
+
+problems:
+
+1. 最低级的错误是，将（i，j）坐标的值写成res[i,j]
+
+效率：3ms，27.79%
+
+几乎同样的思路
+
+```java
+class Solution {
+    public int maxValue(int[][] grid) {
+        int m = grid.length, n = grid[0].length;
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
+                if(i == 0 && j == 0) continue;
+                if(i == 0) grid[i][j] += grid[i][j - 1] ;
+                else if(j == 0) grid[i][j] += grid[i - 1][j];
+                else grid[i][j] += Math.max(grid[i][j - 1], grid[i - 1][j]);
+            }
+        }
+        return grid[m - 1][n - 1];
+    }
+}
+```
+
+2ms，效率98%
+
+我的代码修改为
+
+```java
+class Solution {
+    public int maxValue(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;//提示中说明存在且不为零
+        for(int i = m - 1; i >= 0; i--){
+            for(int j = n - 1; j >= 0; j--){
+                if(j == n - 1 && i == m -1){
+                    continue;
+                }
+                else if(j == n - 1){
+                    grid[i][j] += grid[i + 1][j];
+                }
+                else if(i == m -1){
+                    grid[i][j] += grid[i][j + 1];
+                }
+                else{
+                    grid[i][j] += Math.max(grid[i][ j + 1], grid[i + 1][j]);
+                }
+            }
+        }
+        return grid[0][0];
+    }
+}
+```
+
+仍然是3ms！！
+
+**！！！！！**
+
+是否是for循环++和--的区别？
+
+单独跑了一下，差别不明显，时大时小，忽略这个情况；
+
+#### 24. [剑指 Offer 46. 把数字翻译成字符串](https://leetcode-cn.com/problems/ba-shu-zi-fan-yi-cheng-zi-fu-chuan-lcof/)
+
+思路：也是动态规划，假设到第i个字母的翻译方法有D(i)种，那么D(i+1) = D(i) + D(i - 1)(当第i-1和第i个字母组成的数小数等于25时)，否则D(i+1) = D(i)
+
+```java
+class Solution {
+    public int translateNum(int num) {
+        int length = String.valueOf(num).length();
+        int[] nums = new int[length];
+        int[] res = new int[length];
+        for(int i = length - 1; i >= 0; i--){
+            nums[i] = num % 10;
+            num = num / 10;
+        }
+        for(int i = 0; i < length; i++){
+            if( i == 0){
+                res[i] = 1;
+            }
+            else if(nums[i - 1] * 10 + nums[i] <=25 && nums[i - 1] != 0){
+                res[i] = res[i - 1] + (i > 1 ? res[i - 2] : 1);
+            }
+            else{
+                res[i] = res[i-1];
+            }
+        }
+        return res[length - 1];
+
+    }
+}
+```
+
+问题：
+
+1. 06只有1种翻译方法
+2. 数组不要越界
+
+0ms，100%
+
+#### 25. [剑指 Offer 44. 数字序列中某一位的数字](https://leetcode-cn.com/problems/shu-zi-xu-lie-zhong-mou-yi-wei-de-shu-zi-lcof/)
+
+思路：求出这个数，然后得出对应位数的数字
+
+```java
+class Solution {
+    public int findNthDigit(int n) {
+        int maxIndex = 9;
+        if(n <= 9){
+            return n;
+        }
+        int[] nums = new int[maxIndex];
+        nums[0] = 0;
+        for(int i=1;i<maxIndex;i++){
+            nums[i] = i * (int)Math.pow(10,i - 1) * 9 + nums[i - 1];
+        }
+        int right = 0;
+        for(int i=0;i<maxIndex;i++){
+            if(nums[right] < n){
+                right++;
+            }
+        }
+        int temp = n - nums[right - 1];
+        int reminder = temp % right;
+        int quotient = temp / right;
+        if(reminder == 0){
+            reminder = right;
+            quotient--;
+        }
+
+        int res = (int)Math.pow(10,right - 1) + quotient;
+        return Integer.parseInt("" + String.valueOf(res).charAt(reminder - 1));
+
+    }
+}
+```
+
+0ms 100%（时而1ms）
+
+待优化地方：
+
+1. `Integer.parseInt("" + String.valueOf(res).charAt(reminder - 1));`
+
+可以优化为`String.valueOf(res).charAt(reminder - 1) - ‘0’`
+
+2. 求n是几位数的某一位时复杂了，可以简单的
+
+
+
+简化后的代码
+
+```java
+class Solution {
+    public int findNthDigit(int n) {
+        if(n <= 9){
+            return n;
+        }
+        long r = 1, count = 9;
+        int right = 1;
+        while(n > count){
+            right++;
+            n -= count;
+            r = 10 * r;
+            count = right * r * 9;
+        }
+        int reminder = (n-1) % right;
+        int quotient = (n-1) / right;
+        long res = r + quotient;
+        return String.valueOf(res).charAt(reminder) - '0';
+    }
+}
+```
+
+100%
+
+#### 26. [剑指 Offer 41. 数据流中的中位数](https://leetcode-cn.com/problems/shu-ju-liu-zhong-de-zhong-wei-shu-lcof/)
+
+思路：插入时排序，然后维护两个指针表示中位数，
+
+代码：
+
+```java
+class MedianFinder {
+
+    /** initialize your data structure here. */
+    int size;
+    int left;
+    int right;
+    ArrayList<Integer> nums;
+    public MedianFinder() {
+        size = 0;
+        left = -1;
+        right = -1;
+        nums = new ArrayList<>();
+    }
+
+    public void addNum(int num) {
+        if(size == 0){
+            left++;
+            right++;
+            size++;
+            nums.add(num);
+            return;
+        }
+        else if(left == right){
+            right++;
+        }
+        else{
+            left++;
+        }
+        int a = 0, b = size - 1;
+        size++;
+        if(num >= nums.get(b)){
+            nums.add(num);
+            return;
+        }
+        else if(num <= nums.get(a)){
+            nums.add(0,num);
+            return;
+        }
+        while(a < b){
+            int middle = (a + b) / 2;
+            if(nums.get(middle) < num ){
+                a = middle + 1;
+            }
+            else if(nums.get(middle) > num){
+                b = middle - 1;
+            }
+            else{
+                b = middle;
+                a = middle;
+                break;
+            }
+        }
+        if(num > nums.get(b)){
+            nums.add(b + 1, num);
+        }
+        else{
+            nums.add(b , num);
+        }
+    }
+
+    public double findMedian() {
+        if(left == -1 && right == -1){
+            return 0;
+        }
+        else{
+            return 1.0 * (nums.get(left) + nums.get(right)) / 2;
+        }
+
+    }
+}
+```
+
+108ms ，13.81%
+
+问题：二分法求解当数组中不存在时只能说是在该数附近，所以左右两边都要比较
+
+
+
+优化解法：（使用优先队列）
+
+```java
+class MedianFinder {
+    Queue<Integer> A,B;
+    public MedianFinder() {
+        A = new PriorityQueue<Integer>();
+        B = new PriorityQueue<Integer>((x,y) -> (y - x));
+
+    }
+    public void addNum(int num) {
+        if(A.size() == B.size()){
+            B.add(num);
+            A.add(B.poll());
+        }
+        else{
+            A.add(num);
+            B.add(A.poll());
+        }
+
+    }
+    public double findMedian() {
+        if(A.size() == B.size()){
+            return (A.peek() + B.peek()) / 2.0;
+        }
+        else{
+            return A.peek();
+        }
+    }
+}
+
+```
+
+63ms 91%
+
+使用一个大顶堆和一个小顶堆来分别存储较大的数和较小的数，中位数就是某一个堆堆顶的数或者两个堆堆顶数的平均数；
+
+Question：如何确定插入的数应该放在A还是B？
+
+1. 先定义规则m=n的时候插入A，此时先将数字插入另一个堆中，然后将堆顶的数字弹出（此时已排序）加入到A中。同理，插入B的时候先插入A
+
+
+
